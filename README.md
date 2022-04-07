@@ -1,4 +1,4 @@
-Ref and Code Taken for analysis : Github Firebase Push Notification Tutorial
+Ref and Code Taken for analysis : Github Firebase Push Notification Tutorial https://github.com/Hardik8184/FirebasePushNotification
 
 Firebase Push Notification Tutorial
 
@@ -75,5 +75,31 @@ apply plugin: 'com.google.gms.google-services'</code></pre>
   4. Enter message, select single device and paste the token you copied and click on send. The same as I did on the video, and check your device
   
 
+Analysis On Notifications Channel Settings:
+
+There will be majorly 2 options :
+
+1. Remove Notification Channel Setting which is manually done by user without user consent : *Which is not possible as per android documentation. (https://developer.android.com/reference/android/app/NotificationManager#createNotificationChannel(android.app.NotificationChannel))*
+ here is some findings  from Internet you can check the below links as well. 
+You should recreate the channel just as you created it for the first time. The createNotificationChannel command will create the channel if it hasn't been created yet, and it will update the channel if it has been already created.
+If the channel is already created, then the only thing you can change is the name of the channel and the channel description, nothing else. The importance will be ignored, because the user might have already changed the importance of the channel manually. But even if they hasn't changed that, still the importance won't be updated, and actually that's the purpose of the notification channels. To give freedom to the users to manage their channels, without the developers messing with them when the app is updated. 
+So in summary, by declaring: 
+NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, “newName”, NotificationManager.IMPORTANCE_DEFAULT);
+notificationManager.createNotificationChannel(notificationChannel); 
+in an already created channel, the name of the channel will be updated, but not the importance. If you want to update the channel description as well, you can do that like that: 
+notificationChannel.setDescription("new description"); //set that before creating the channel
+
+  So, From here we conclude that we doesn’t need option one solution, we need to override the settings of user device.  
+
+Ref 1: https://developer.android.com/training/notify-user/channels 
+Ref 2: https://stackoverflow.com/questions/45081815/android-o-notification-channels-change-vibration-pattern-or-sound-type 
+Ref 3: https://stackoverflow.com/questions/52364032/how-to-properly-update-notification-channel-android-oreo
+
+
+  2.Delete Notifications Channels and make the channels again.  
+
+To create notification channel, we will create the same channel name but we will change the channel_id for that we need to create a unique identifier. For ex. Currently we use channel id as : mydefaultchannel but to achieve or solve this case we should use mydefaultchannel1 or mydefaultchannel_1 or anyother of your choice. Channel id is never will be on the frontend or it is not be for user it is only for the system to manage settings.
+
+Issues is open, you can write to me.
 
 Thanks.
